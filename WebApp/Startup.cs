@@ -24,10 +24,13 @@ namespace GraphApiSharepointIdentity
         {
             string[] initialScopes = Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
 
+            
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"))
                 .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-                .AddMicrosoftGraph(Configuration.GetSection("DownstreamApi"))
+                .AddMicrosoftGraph(
+                    Configuration["DownstreamApi:BaseUrl"],
+                    Configuration.GetValue<string>("DownstreamApi:Scopes"))
                 .AddInMemoryTokenCaches();
 
             services.AddControllersWithViews(options =>
