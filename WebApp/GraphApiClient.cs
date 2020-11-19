@@ -5,6 +5,7 @@ using Microsoft.Identity.Web;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,10 +17,13 @@ namespace GraphApiSharepointIdentity
         private readonly ILogger<GraphApiClient> _logger;
 
         readonly ITokenAcquisition tokenAcquisition;
+        private readonly IHttpClientFactory _clientFactory;
 
-        public GraphApiClient(ITokenAcquisition tokenAcquisition, 
+        public GraphApiClient(ITokenAcquisition tokenAcquisition,
+            IHttpClientFactory clientFactory,
             ILogger<GraphApiClient> logger)
         {
+            _clientFactory = clientFactory;
             this.tokenAcquisition = tokenAcquisition;
             _logger = logger;
         }
@@ -100,13 +104,19 @@ namespace GraphApiSharepointIdentity
         private async Task<GraphServiceClient> GetGraphClient(string[] scopes)
         {
             var token = await tokenAcquisition.GetAccessTokenForUserAsync(
-               scopes).ConfigureAwait(false);
+             scopes).ConfigureAwait(false);
 
-            GraphServiceClient graphClient = new GraphServiceClient("https://graph.microsoft.com/v1.0",
-                new DelegateAuthenticationProvider(async (requestMessage) =>
+            var client = _clientFactory.CreateClient();
+            client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            GraphServiceClient graphClient = new GraphServiceClient(client)
+            {
+                AuthenticationProvider = new DelegateAuthenticationProvider(async (requestMessage) =>
                 {
                     requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", token);
-                }));
+                })
+            };
 
             return graphClient;
         }

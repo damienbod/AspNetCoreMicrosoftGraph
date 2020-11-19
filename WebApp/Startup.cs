@@ -24,6 +24,7 @@ namespace GraphApiSharepointIdentity
         {
             string[] initialScopes = Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
 
+            services.AddHttpClient();
             services.AddScoped<GraphApiClient>();
 
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
