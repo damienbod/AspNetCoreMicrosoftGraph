@@ -1,6 +1,5 @@
 ﻿using GraphApiSharepointIdentity.Controllers;
 using Microsoft.Graph;
-using Microsoft.Identity.Web;
 using System;
 using System.IO;
 using System.Linq;
@@ -13,8 +12,7 @@ namespace GraphApiSharepointIdentity
     {
         private readonly GraphServiceClient _graphServiceClient;
 
-        public GraphApiClientUI(ITokenAcquisition tokenAcquisition,
-            GraphServiceClient graphServiceClient)
+        public GraphApiClientUI(GraphServiceClient graphServiceClient)
         {
             _graphServiceClient = graphServiceClient;
         }
