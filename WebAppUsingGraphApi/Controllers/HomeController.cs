@@ -39,7 +39,7 @@ namespace GraphApiSharepointIdentity.Controllers
 
             try
             {
-                ViewData["Photo"] = _graphApiClientUI.GetGraphApiProfilePhoto();
+                ViewData["Photo"] = await _graphApiClientUI.GetGraphApiProfilePhoto();
             }
             catch
             {
