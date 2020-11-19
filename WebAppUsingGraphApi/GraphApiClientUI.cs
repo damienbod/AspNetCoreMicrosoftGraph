@@ -1,5 +1,4 @@
 ﻿using GraphApiSharepointIdentity.Controllers;
-using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using System;
