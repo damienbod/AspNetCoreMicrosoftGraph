@@ -25,27 +25,10 @@ namespace WebApiUsingGraphApi
 
         public async Task<User> GetGraphApiUser()
         {
-            var graphclient = await GetGraphClient(new string[] { "user.read" })
+            var graphclient = await GetGraphClient(new string[] { "User.ReadBasic.All", "user.read" })
                .ConfigureAwait(false);
 
             return await graphclient.Me.Request().GetAsync().ConfigureAwait(false);
-        }
-
-        public async Task<string> GetGraphApiProfilePhoto()
-        {
-            var graphclient = await GetGraphClient(new string[] { "user.read" })
-               .ConfigureAwait(false);
-
-            var photo = string.Empty;
-            // Get user photo
-            using (var photoStream = await graphclient.Me.Photo
-                .Content.Request().GetAsync().ConfigureAwait(false))
-            {
-                byte[] photoByte = ((MemoryStream)photoStream).ToArray();
-                photo = Convert.ToBase64String(photoByte);
-            }
-
-            return photo;
         }
 
         public async Task<string> GetSharepointFile()
@@ -102,7 +85,7 @@ namespace WebApiUsingGraphApi
              scopes).ConfigureAwait(false);
 
             var client = _clientFactory.CreateClient();
-            client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0");
+            client.BaseAddress = new Uri("https://graph.microsoft.com/beta");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             GraphServiceClient graphClient = new GraphServiceClient(client)

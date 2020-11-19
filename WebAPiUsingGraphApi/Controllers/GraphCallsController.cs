@@ -18,7 +18,7 @@ namespace WebApiUsingGraphApi.Controllers
         }
 
         [HttpGet]
-        public async Task<string> Index()
+        public async Task<string> Get()
         {
             var user = await _graphApiClientDirect.GetGraphApiUser()
                 .ConfigureAwait(false);
