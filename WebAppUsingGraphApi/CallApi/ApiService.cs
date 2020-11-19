@@ -14,8 +14,8 @@ namespace GraphApiSharepointIdentity
         private readonly ITokenAcquisition _tokenAcquisition;
         private readonly IConfiguration _configuration;
 
-        public ApiService(IHttpClientFactory clientFactory, 
-            ITokenAcquisition tokenAcquisition, 
+        public ApiService(IHttpClientFactory clientFactory,
+            ITokenAcquisition tokenAcquisition,
             IConfiguration configuration)
         {
             _clientFactory = clientFactory;
@@ -35,7 +35,7 @@ namespace GraphApiSharepointIdentity
                 client.BaseAddress = new Uri(_configuration["CallApi:ApiBaseAddress"]);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-       
+
                 var response = await client.GetAsync("GraphCalls");
                 if (response.IsSuccessStatusCode)
                 {

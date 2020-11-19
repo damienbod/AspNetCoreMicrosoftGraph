@@ -16,7 +16,7 @@ namespace WebApiUsingGraphApi.Controllers
         {
             _graphApiClientDirect = graphApiClientDirect;
         }
- 
+
         [HttpGet]
         public async Task<string> Index()
         {

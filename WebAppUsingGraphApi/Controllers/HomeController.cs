@@ -62,7 +62,7 @@ namespace GraphApiSharepointIdentity.Controllers
 
             return View();
         }
-        
+
         public IActionResult Privacy()
         {
             return View();
