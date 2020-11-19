@@ -23,6 +23,7 @@ namespace WebApiUsingGraphApi.Controllers
             var user = await _graphApiClientDirect.GetGraphApiUser()
                 .ConfigureAwait(false);
 
+            // var photo = await _graphApiClientDirect.GetGraphApiProfilePhoto();
             // var file = await _graphApiClientDirect.GetSharepointFile();
             return user.DisplayName;
         }

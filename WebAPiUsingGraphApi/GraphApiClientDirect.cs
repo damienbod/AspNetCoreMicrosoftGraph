@@ -31,6 +31,30 @@ namespace WebApiUsingGraphApi
             return await graphclient.Me.Request().GetAsync().ConfigureAwait(false);
         }
 
+        public async Task<string> GetGraphApiProfilePhoto()
+        {
+            try
+            {
+                var graphclient = await GetGraphClient(new string[] { "User.ReadBasic.All", "user.read" })
+               .ConfigureAwait(false);
+
+                var photo = string.Empty;
+                // Get user photo
+                using (var photoStream = await graphclient.Me.Photo
+                    .Content.Request().GetAsync().ConfigureAwait(false))
+                {
+                    byte[] photoByte = ((MemoryStream)photoStream).ToArray();
+                    photo = Convert.ToBase64String(photoByte);
+                }
+
+                return photo;
+            }
+            catch(Exception ex)
+            {
+                return string.Empty;
+            }   
+        }
+
         public async Task<string> GetSharepointFile()
         {
             var graphclient = await GetGraphClient(
