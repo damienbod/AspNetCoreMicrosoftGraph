@@ -28,8 +28,7 @@ namespace GraphApiSharepointIdentity
             services.AddScoped<GraphApiClientUI>();
             services.AddScoped<ApiService>();
 
-            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"))
+            services.AddMicrosoftIdentityWebAppAuthentication(Configuration)
                 .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
                 .AddMicrosoftGraph(
                     Configuration["DownstreamApi:BaseUrl"],
@@ -42,9 +41,9 @@ namespace GraphApiSharepointIdentity
                     .RequireAuthenticatedUser()
                     .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
-            });
-            services.AddRazorPages()
-                    .AddMicrosoftIdentityUI();
+            }).AddMicrosoftIdentityUI();
+
+            services.AddRazorPages();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
