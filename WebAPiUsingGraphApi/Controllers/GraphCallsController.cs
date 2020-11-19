@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
 using System.Threading.Tasks;
 
 namespace WebAPiUsingGraphApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class GraphCallsController : ControllerBase
@@ -16,7 +18,6 @@ namespace WebAPiUsingGraphApi.Controllers
         }
  
         [HttpGet]
-        [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
         public async Task<string> Index()
         {
             var user = await _graphApiClientDirect.GetGraphApiUser()

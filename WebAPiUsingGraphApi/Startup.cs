@@ -1,18 +1,12 @@
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebAPiUsingGraphApi
 {
@@ -28,18 +22,23 @@ namespace WebAPiUsingGraphApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string[] initialScopes = Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
-
             services.AddHttpClient();
             services.AddScoped<GraphApiClientDirect>();
 
-            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"))
+            services.AddMicrosoftIdentityWebApiAuthentication(Configuration)
                 .EnableTokenAcquisitionToCallDownstreamApi()
                 .AddMicrosoftGraph(defaultScopes: "/.default")
                 .AddInMemoryTokenCaches();
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    // .RequireClaim("email") // disabled this to test with users that have no email (no license added)
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPiUsingGraphApi", Version = "v1" });
@@ -60,6 +59,7 @@ namespace WebAPiUsingGraphApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

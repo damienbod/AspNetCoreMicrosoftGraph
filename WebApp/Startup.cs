@@ -26,6 +26,7 @@ namespace GraphApiSharepointIdentity
 
             services.AddHttpClient();
             services.AddScoped<GraphApiClientUI>();
+            services.AddScoped<ApiService>();
 
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"))
