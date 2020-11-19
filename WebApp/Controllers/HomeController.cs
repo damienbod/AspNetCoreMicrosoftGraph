@@ -11,17 +11,17 @@ namespace GraphApiSharepointIdentity.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly GraphApiClient _graphApiClient;
+        private readonly GraphApiClientUI _graphApiClientUI;
 
-        public HomeController(GraphApiClient graphApiClient)
+        public HomeController(GraphApiClientUI graphApiClientUI)
         {
-            _graphApiClient = graphApiClient;
+            _graphApiClientUI = graphApiClientUI;
         }
 
         [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
         public async Task<IActionResult> Index()
         {
-            var user = await _graphApiClient.GetGraphApiUser()
+            var user = await _graphApiClientUI.GetGraphApiUser()
                 .ConfigureAwait(false);
 
             ViewData["ApiResult"] = user.DisplayName;
@@ -32,14 +32,14 @@ namespace GraphApiSharepointIdentity.Controllers
         [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
         public async Task<IActionResult> Profile()
         {
-            var user = await _graphApiClient.GetGraphApiUser()
+            var user = await _graphApiClientUI.GetGraphApiUser()
                 .ConfigureAwait(false);
 
             ViewData["Me"] = user;
 
             try
             {
-                ViewData["Photo"] = _graphApiClient.GetGraphApiProfilePhoto();
+                ViewData["Photo"] = _graphApiClientUI.GetGraphApiProfilePhoto();
             }
             catch
             {
@@ -53,7 +53,7 @@ namespace GraphApiSharepointIdentity.Controllers
         {
             try
             {
-                var data = await _graphApiClient.GetSharepointFile().ConfigureAwait(false);
+                var data = await _graphApiClientUI.GetSharepointFile().ConfigureAwait(false);
             }
             catch (Exception ex)
             {

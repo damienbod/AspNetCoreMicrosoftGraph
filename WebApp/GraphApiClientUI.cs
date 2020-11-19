@@ -5,45 +5,31 @@ using Microsoft.Identity.Web;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GraphApiSharepointIdentity
 {
-    public class GraphApiClient
+    public class GraphApiClientUI
     {
-        private readonly ILogger<GraphApiClient> _logger;
+        private readonly GraphServiceClient _graphServiceClient;
 
-        readonly ITokenAcquisition tokenAcquisition;
-        private readonly IHttpClientFactory _clientFactory;
-
-        public GraphApiClient(ITokenAcquisition tokenAcquisition,
-            IHttpClientFactory clientFactory,
-            ILogger<GraphApiClient> logger)
+        public GraphApiClientUI(ITokenAcquisition tokenAcquisition,
+            GraphServiceClient graphServiceClient)
         {
-            _clientFactory = clientFactory;
-            this.tokenAcquisition = tokenAcquisition;
-            _logger = logger;
+            _graphServiceClient = graphServiceClient;
         }
 
         public async Task<User> GetGraphApiUser()
         {
-            var graphclient = await GetGraphClient(new string[] { "user.read" })
-               .ConfigureAwait(false);
-
-            return await graphclient.Me.Request().GetAsync().ConfigureAwait(false);
+            return await _graphServiceClient.Me.Request().GetAsync().ConfigureAwait(false);
         }
 
         public async Task<string> GetGraphApiProfilePhoto()
         {
-            var graphclient = await GetGraphClient(new string[] { "user.read" })
-               .ConfigureAwait(false);
-
             var photo = string.Empty;
             // Get user photo
-            using (var photoStream = await graphclient.Me.Photo
+            using (var photoStream = await _graphServiceClient.Me.Photo
                 .Content.Request().GetAsync().ConfigureAwait(false))
             {
                 byte[] photoByte = ((MemoryStream)photoStream).ToArray();
@@ -55,11 +41,7 @@ namespace GraphApiSharepointIdentity
 
         public async Task<string> GetSharepointFile()
         {
-            var graphclient = await GetGraphClient(
-                new string[] { "user.read", "AllSites.Read" }
-            ).ConfigureAwait(false);
-
-            var user = await graphclient.Me.Request().GetAsync().ConfigureAwait(false);
+            var user = await _graphServiceClient.Me.Request().GetAsync().ConfigureAwait(false);
 
             if (user == null)
                 throw new NotFoundException($"User not found in AD.");
@@ -68,19 +50,19 @@ namespace GraphApiSharepointIdentity
             var relativePath = "/sites/TestDoc";
             var fileName = "aad_ms_login_02.png";
 
-            var site = await graphclient
+            var site = await _graphServiceClient
                 .Sites[sharepointDomain]
                 .SiteWithPath(relativePath)
                 .Request()
                 .GetAsync().ConfigureAwait(false);
 
-            var drive = await graphclient
+            var drive = await _graphServiceClient
                 .Sites[site.Id]
                 .Drive
                 .Request()
                 .GetAsync().ConfigureAwait(false);
 
-            var items = await graphclient
+            var items = await _graphServiceClient
                 .Sites[site.Id]
                 .Drives[drive.Id]
                 .Root
@@ -90,7 +72,7 @@ namespace GraphApiSharepointIdentity
             var file = items
                 .FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
 
-            var stream = await graphclient
+            var stream = await _graphServiceClient
                 .Sites[site.Id]
                 .Drives[drive.Id]
                 .Items[file.Id].Content
@@ -99,26 +81,6 @@ namespace GraphApiSharepointIdentity
 
             var fileAsString = StreamToString(stream);
             return fileAsString;
-        }
-
-        private async Task<GraphServiceClient> GetGraphClient(string[] scopes)
-        {
-            var token = await tokenAcquisition.GetAccessTokenForUserAsync(
-             scopes).ConfigureAwait(false);
-
-            var client = _clientFactory.CreateClient();
-            client.BaseAddress = new Uri("https://graph.microsoft.com/v1.0");
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            GraphServiceClient graphClient = new GraphServiceClient(client)
-            {
-                AuthenticationProvider = new DelegateAuthenticationProvider(async (requestMessage) =>
-                {
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", token);
-                })
-            };
-
-            return graphClient;
         }
 
         private static string StreamToString(Stream stream)

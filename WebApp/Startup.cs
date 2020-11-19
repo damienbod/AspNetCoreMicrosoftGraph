@@ -25,7 +25,7 @@ namespace GraphApiSharepointIdentity
             string[] initialScopes = Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
 
             services.AddHttpClient();
-            services.AddScoped<GraphApiClient>();
+            services.AddScoped<GraphApiClientUI>();
 
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"))
