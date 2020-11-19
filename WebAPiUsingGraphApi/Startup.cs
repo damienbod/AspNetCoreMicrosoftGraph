@@ -27,7 +27,6 @@ namespace WebAPiUsingGraphApi
 
             services.AddMicrosoftIdentityWebApiAuthentication(Configuration)
                 .EnableTokenAcquisitionToCallDownstreamApi()
-                .AddMicrosoftGraph(defaultScopes: "/.default")
                 .AddInMemoryTokenCaches();
 
             services.AddControllers(options =>

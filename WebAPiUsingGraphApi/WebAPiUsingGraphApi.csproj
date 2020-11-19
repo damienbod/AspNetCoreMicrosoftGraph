@@ -15,5 +15,4 @@
     <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="1.3.0" />
   </ItemGroup>
 
-
-  </Project>
+</Project>
