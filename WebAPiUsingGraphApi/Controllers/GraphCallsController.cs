@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web;
 using System.Threading.Tasks;
 
-namespace WebAPiUsingGraphApi.Controllers
+namespace WebApiUsingGraphApi.Controllers
 {
     [Authorize]
     [ApiController]

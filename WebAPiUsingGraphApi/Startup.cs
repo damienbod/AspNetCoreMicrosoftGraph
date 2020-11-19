@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 
-namespace WebAPiUsingGraphApi
+namespace WebApiUsingGraphApi
 {
     public class Startup
     {
@@ -40,7 +40,7 @@ namespace WebAPiUsingGraphApi
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPiUsingGraphApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiUsingGraphApi", Version = "v1" });
             });
         }
 
@@ -51,7 +51,7 @@ namespace WebAPiUsingGraphApi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPiUsingGraphApi v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApiUsingGraphApi v1"));
             }
 
             app.UseHttpsRedirection();
