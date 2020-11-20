@@ -13,14 +13,14 @@ namespace WebApiUsingGraphApi
 {
     public class GraphApiClientDirect
     {
-        readonly ITokenAcquisition tokenAcquisition;
+        private readonly ITokenAcquisition _tokenAcquisition;
         private readonly IHttpClientFactory _clientFactory;
 
         public GraphApiClientDirect(ITokenAcquisition tokenAcquisition,
             IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
-            this.tokenAcquisition = tokenAcquisition;
+            _tokenAcquisition = tokenAcquisition;
         }
 
         public async Task<User> GetGraphApiUser()
@@ -105,7 +105,7 @@ namespace WebApiUsingGraphApi
 
         private async Task<GraphServiceClient> GetGraphClient(string[] scopes)
         {
-            var token = await tokenAcquisition.GetAccessTokenForUserAsync(
+            var token = await _tokenAcquisition.GetAccessTokenForUserAsync(
              scopes).ConfigureAwait(false);
 
             var client = _clientFactory.CreateClient();
