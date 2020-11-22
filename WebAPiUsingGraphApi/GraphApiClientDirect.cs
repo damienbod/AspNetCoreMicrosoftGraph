@@ -120,6 +120,7 @@ namespace WebApiUsingGraphApi
                 })
             };
 
+            graphClient.BaseUrl = "https://graph.microsoft.com/beta";
             return graphClient;
         }
 
