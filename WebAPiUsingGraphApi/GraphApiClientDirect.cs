@@ -49,7 +49,7 @@ namespace WebApiUsingGraphApi
 
                 return photo;
             }
-            catch(Exception ex)
+            catch
             {
                 return string.Empty;
             }   
