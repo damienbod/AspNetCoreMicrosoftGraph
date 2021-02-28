@@ -4,6 +4,8 @@ https://damienbod.com/2020/11/20/using-microsoft-graph-api-in-asp-net-core/
 
 ## History
 
+2021-02-28 Updated to Microsoft.Identity.Web 1.7.0
+
 2021-02-13 Updated to Microsoft.Identity.Web 1.6.0
 
 # Links
