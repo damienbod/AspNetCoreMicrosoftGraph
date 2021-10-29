@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "GraphApiSharepointIdentity": {
+    "WebAppUsingGraphApi": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
