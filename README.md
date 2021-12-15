@@ -1,3 +1,5 @@
+[![.NET](https://github.com/damienbod/AspNetCoreUsingGraphApi/actions/workflows/dotnet.yml/badge.svg)](https://github.com/damienbod/AspNetCoreUsingGraphApi/actions/workflows/dotnet.yml)
+
 # Using Graph API in ASP.NET Core
 
 https://damienbod.com/2020/11/20/using-microsoft-graph-api-in-asp-net-core/
