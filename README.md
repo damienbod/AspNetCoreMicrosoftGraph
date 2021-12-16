@@ -1,4 +1,4 @@
-[![.NET](https://github.com/damienbod/AspNetCoreUsingGraphApi/actions/workflows/dotnet.yml/badge.svg)](https://github.com/damienbod/AspNetCoreUsingGraphApi/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/damienbod/AspNetCoreMicrosoftGraph/actions/workflows/dotnet.yml/badge.svg)](https://github.com/damienbod/AspNetCoreMicrosoftGraph/actions/workflows/dotnet.yml)
 
 # Using Microsoft Graph in ASP.NET Core
 
