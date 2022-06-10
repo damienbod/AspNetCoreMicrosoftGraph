@@ -20,8 +20,7 @@ namespace WebApiUsingGraphApi.Controllers
         [HttpGet]
         public async Task<string> Get()
         {
-            var user = await _graphApiClientDirect.GetGraphApiUser()
-                .ConfigureAwait(false);
+            var user = await _graphApiClientDirect.GetGraphApiUser();
 
             // var photo = await _graphApiClientDirect.GetGraphApiProfilePhoto();
             // var file = await _graphApiClientDirect.GetSharepointFile();

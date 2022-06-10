@@ -25,18 +25,16 @@ namespace WebApiUsingGraphApi
 
         public async Task<User> GetGraphApiUser()
         {
-            var graphclient = await GetGraphClient(new string[] { "User.ReadBasic.All", "user.read" })
-               .ConfigureAwait(false);
+            var graphclient = await GetGraphClient(new string[] { "User.ReadBasic.All", "user.read" });
 
-            return await graphclient.Me.Request().GetAsync().ConfigureAwait(false);
+            return await graphclient.Me.Request().GetAsync();
         }
 
         public async Task<string> GetGraphApiProfilePhoto()
         {
             try
             {
-                var graphclient = await GetGraphClient(new string[] { "User.ReadBasic.All", "user.read" })
-               .ConfigureAwait(false);
+                var graphclient = await GetGraphClient(new string[] { "User.ReadBasic.All", "user.read" });
 
                 var photo = string.Empty;
                 // Get user photo
@@ -59,9 +57,9 @@ namespace WebApiUsingGraphApi
         {
             var graphclient = await GetGraphClient(
                 new string[] { "user.read", "AllSites.Read" }
-            ).ConfigureAwait(false);
+            );
 
-            var user = await graphclient.Me.Request().GetAsync().ConfigureAwait(false);
+            var user = await graphclient.Me.Request().GetAsync();
 
             if (user == null)
                 throw new ArgumentException($"User not found in AD.");
@@ -74,20 +72,21 @@ namespace WebApiUsingGraphApi
                 .Sites[sharepointDomain]
                 .SiteWithPath(relativePath)
                 .Request()
-                .GetAsync().ConfigureAwait(false);
+                .GetAsync();
 
             var drive = await graphclient
                 .Sites[site.Id]
                 .Drive
                 .Request()
-                .GetAsync().ConfigureAwait(false);
+                .GetAsync();
 
             var items = await graphclient
                 .Sites[site.Id]
                 .Drives[drive.Id]
                 .Root
                 .Children
-                .Request().GetAsync().ConfigureAwait(false);
+                .Request()
+                .GetAsync();
 
             var file = items
                 .FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
@@ -97,7 +96,7 @@ namespace WebApiUsingGraphApi
                 .Drives[drive.Id]
                 .Items[file.Id].Content
                 .Request()
-                .GetAsync().ConfigureAwait(false);
+                .GetAsync();
 
             var fileAsString = StreamToString(stream);
             return fileAsString;
@@ -105,32 +104,28 @@ namespace WebApiUsingGraphApi
 
         private async Task<GraphServiceClient> GetGraphClient(string[] scopes)
         {
-            var token = await _tokenAcquisition.GetAccessTokenForUserAsync(
-             scopes).ConfigureAwait(false);
+            var token = await _tokenAcquisition.GetAccessTokenForUserAsync(scopes);
 
             var client = _clientFactory.CreateClient();
             client.BaseAddress = new Uri("https://graph.microsoft.com/beta");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            GraphServiceClient graphClient = new GraphServiceClient(client)
+            var graphClient = new GraphServiceClient(client)
             {
-                AuthenticationProvider = new DelegateAuthenticationProvider(async (requestMessage) =>
-                {
+                AuthenticationProvider = new DelegateAuthenticationProvider((requestMessage) => {
                     requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", token);
-                })
+                    return Task.CompletedTask;
+                }),
+                BaseUrl = "https://graph.microsoft.com/beta"
             };
-
-            graphClient.BaseUrl = "https://graph.microsoft.com/beta";
             return graphClient;
         }
 
         private static string StreamToString(Stream stream)
         {
             stream.Position = 0;
-            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            return reader.ReadToEnd();
         }
     }
 }

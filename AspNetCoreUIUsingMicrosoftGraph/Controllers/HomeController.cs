@@ -21,8 +21,7 @@ namespace GraphApiSharepointIdentity.Controllers
         [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
         public async Task<IActionResult> Index()
         {
-            var user = await _graphApiClientUI.GetGraphApiUser()
-                .ConfigureAwait(false);
+            var user = await _graphApiClientUI.GetGraphApiUser();
 
             ViewData["ApiResult"] = user.DisplayName;
 
@@ -33,7 +32,7 @@ namespace GraphApiSharepointIdentity.Controllers
         public async Task<IActionResult> Profile()
         {
             var user = await _graphApiClientUI.GetGraphApiUser()
-                .ConfigureAwait(false);
+                ;
 
             ViewData["Me"] = user;
 
@@ -53,7 +52,7 @@ namespace GraphApiSharepointIdentity.Controllers
         {
             try
             {
-                var data = await _graphApiClientUI.GetSharepointFile().ConfigureAwait(false);
+                var data = await _graphApiClientUI.GetSharepointFile();
             }
             catch (Exception ex)
             {

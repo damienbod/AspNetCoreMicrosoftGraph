@@ -21,7 +21,7 @@ namespace GraphApiSharepointIdentity
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string[] initialScopes = Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
+            string[] initialScopes = Configuration.GetValue<string>("CallApi:Scopes")?.Split(' ');
 
             services.AddHttpClient();
             services.AddScoped<GraphApiClientUI>();
@@ -30,7 +30,7 @@ namespace GraphApiSharepointIdentity
             services.AddMicrosoftIdentityWebAppAuthentication(Configuration)
                 .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
                 .AddMicrosoftGraph(
-                    Configuration["DownstreamApi:BaseUrl"], 
+                    Configuration["GraphApi:BaseUrl"], 
                     "https://graph.microsoft.com/.default")
                 .AddInMemoryTokenCaches();
 

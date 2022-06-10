@@ -54,20 +54,20 @@ namespace GraphApiSharepointIdentity
                 .Sites[sharepointDomain]
                 .SiteWithPath(relativePath)
                 .Request()
-                .GetAsync().ConfigureAwait(false);
+                .GetAsync();
 
             var drive = await _graphServiceClient
                 .Sites[site.Id]
                 .Drive
                 .Request()
-                .GetAsync().ConfigureAwait(false);
+                .GetAsync();
 
             var items = await _graphServiceClient
                 .Sites[site.Id]
                 .Drives[drive.Id]
                 .Root
                 .Children
-                .Request().GetAsync().ConfigureAwait(false);
+                .Request().GetAsync();
 
             var file = items
                 .FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
@@ -77,7 +77,7 @@ namespace GraphApiSharepointIdentity
                 .Drives[drive.Id]
                 .Items[file.Id].Content
                 .Request()
-                .GetAsync().ConfigureAwait(false);
+                .GetAsync();
 
             var fileAsString = StreamToString(stream);
             return fileAsString;
