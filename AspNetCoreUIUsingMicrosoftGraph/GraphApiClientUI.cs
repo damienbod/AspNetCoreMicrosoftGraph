@@ -19,7 +19,10 @@ namespace GraphApiSharepointIdentity
 
         public async Task<User> GetGraphApiUser()
         {
-            return await _graphServiceClient.Me.Request().GetAsync().ConfigureAwait(false);
+            return await _graphServiceClient
+                .Me
+                .Request()
+                .GetAsync();
         }
 
         public async Task<string> GetGraphApiProfilePhoto()
@@ -38,7 +41,7 @@ namespace GraphApiSharepointIdentity
 
         public async Task<string> GetSharepointFile()
         {
-            var user = await _graphServiceClient.Me.Request().GetAsync().ConfigureAwait(false);
+            var user = await _graphServiceClient.Me.Request().GetAsync();
 
             if (user == null)
                 throw new NotFoundException($"User not found in AD.");
