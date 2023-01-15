@@ -22,11 +22,12 @@ public class Startup
         services.AddScoped<GraphApiClientUI>();
         services.AddScoped<ApiService>();
 
+        var baseAddress = Configuration["GraphApi:BaseUrl"];
+        baseAddress ??= "https://graph.microsoft.com/beta";
+
         services.AddMicrosoftIdentityWebAppAuthentication(Configuration)
             .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-            .AddMicrosoftGraph(
-                Configuration["GraphApi:BaseUrl"], 
-                "https://graph.microsoft.com/.default")
+            .AddMicrosoftGraph(baseAddress, "https://graph.microsoft.com/.default")
             .AddInMemoryTokenCaches();
 
         services.AddControllersWithViews(options =>
