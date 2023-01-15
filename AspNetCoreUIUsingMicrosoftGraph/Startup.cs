@@ -16,7 +16,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        string[] initialScopes = Configuration.GetValue<string>("CallApi:Scopes")?.Split(' ');
+        string[]? initialScopes = Configuration.GetValue<string>("CallApi:Scopes")?.Split(' ');
 
         services.AddHttpClient();
         services.AddScoped<GraphApiClientUI>();
