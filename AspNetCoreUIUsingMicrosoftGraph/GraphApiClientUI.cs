@@ -65,13 +65,12 @@ public class GraphApiClientUI
             .Children
             .Request().GetAsync();
 
-        var file = items
-            .FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
+        var file = items.FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
 
         var stream = await _graphServiceClient
             .Sites[site.Id]
             .Drives[drive.Id]
-            .Items[file.Id].Content
+            .Items[file!.Id].Content
             .Request()
             .GetAsync();
 
@@ -82,9 +81,7 @@ public class GraphApiClientUI
     private static string StreamToString(Stream stream)
     {
         stream.Position = 0;
-        using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-        {
-            return reader.ReadToEnd();
-        }
+        using StreamReader reader = new(stream, Encoding.UTF8);
+        return reader.ReadToEnd();
     }
 }

@@ -83,13 +83,12 @@ public class GraphApiClientDirect
             .Request()
             .GetAsync();
 
-        var file = items
-            .FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
+        var file = items.FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
 
         var stream = await graphclient
             .Sites[site.Id]
             .Drives[drive.Id]
-            .Items[file.Id].Content
+            .Items[file!.Id].Content
             .Request()
             .GetAsync();
 

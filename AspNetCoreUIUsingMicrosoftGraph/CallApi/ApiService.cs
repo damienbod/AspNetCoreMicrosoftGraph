@@ -23,11 +23,14 @@ public class ApiService
         try
         {
             var client = _clientFactory.CreateClient();
-
             var scope = _configuration["CallApi:ScopeForAccessToken"];
-            var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new[] { scope });
+            if(scope == null) throw new ArgumentNullException(nameof(scope));
+            var baseAddress = _configuration["CallApi:ApiBaseAddress"];
+            if (baseAddress == null) throw new ArgumentNullException(nameof(baseAddress));
 
-            client.BaseAddress = new Uri(_configuration["CallApi:ApiBaseAddress"]);
+            var accessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new List<string> { scope });
+
+            client.BaseAddress = new Uri(baseAddress);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
