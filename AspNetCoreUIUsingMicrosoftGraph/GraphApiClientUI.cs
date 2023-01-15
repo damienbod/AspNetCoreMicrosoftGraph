@@ -1,95 +1,90 @@
 ﻿using GraphApiSharepointIdentity.Controllers;
 using Microsoft.Graph;
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace GraphApiSharepointIdentity
+namespace GraphApiSharepointIdentity;
+
+public class GraphApiClientUI
 {
-    public class GraphApiClientUI
+    private readonly GraphServiceClient _graphServiceClient;
+
+    public GraphApiClientUI(GraphServiceClient graphServiceClient)
     {
-        private readonly GraphServiceClient _graphServiceClient;
+        _graphServiceClient = graphServiceClient;
+    }
 
-        public GraphApiClientUI(GraphServiceClient graphServiceClient)
+    public async Task<User> GetGraphApiUser()
+    {
+        return await _graphServiceClient
+            .Me
+            .Request()
+            .GetAsync();
+    }
+
+    public async Task<string> GetGraphApiProfilePhoto()
+    {
+        var photo = string.Empty;
+        // Get user photo
+        using (var photoStream = await _graphServiceClient.Me.Photo
+            .Content.Request().GetAsync().ConfigureAwait(false))
         {
-            _graphServiceClient = graphServiceClient;
+            byte[] photoByte = ((MemoryStream)photoStream).ToArray();
+            photo = Convert.ToBase64String(photoByte);
         }
 
-        public async Task<User> GetGraphApiUser()
+        return photo;
+    }
+
+    public async Task<string> GetSharepointFile()
+    {
+        var user = await _graphServiceClient.Me.Request().GetAsync();
+
+        if (user == null)
+            throw new NotFoundException($"User not found in AD.");
+
+        var sharepointDomain = "damienbodtestsharing.sharepoint.com";
+        var relativePath = "/sites/TestDoc";
+        var fileName = "aad_ms_login_02.png";
+
+        var site = await _graphServiceClient
+            .Sites[sharepointDomain]
+            .SiteWithPath(relativePath)
+            .Request()
+            .GetAsync();
+
+        var drive = await _graphServiceClient
+            .Sites[site.Id]
+            .Drive
+            .Request()
+            .GetAsync();
+
+        var items = await _graphServiceClient
+            .Sites[site.Id]
+            .Drives[drive.Id]
+            .Root
+            .Children
+            .Request().GetAsync();
+
+        var file = items
+            .FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
+
+        var stream = await _graphServiceClient
+            .Sites[site.Id]
+            .Drives[drive.Id]
+            .Items[file.Id].Content
+            .Request()
+            .GetAsync();
+
+        var fileAsString = StreamToString(stream);
+        return fileAsString;
+    }
+
+    private static string StreamToString(Stream stream)
+    {
+        stream.Position = 0;
+        using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
         {
-            return await _graphServiceClient
-                .Me
-                .Request()
-                .GetAsync();
-        }
-
-        public async Task<string> GetGraphApiProfilePhoto()
-        {
-            var photo = string.Empty;
-            // Get user photo
-            using (var photoStream = await _graphServiceClient.Me.Photo
-                .Content.Request().GetAsync().ConfigureAwait(false))
-            {
-                byte[] photoByte = ((MemoryStream)photoStream).ToArray();
-                photo = Convert.ToBase64String(photoByte);
-            }
-
-            return photo;
-        }
-
-        public async Task<string> GetSharepointFile()
-        {
-            var user = await _graphServiceClient.Me.Request().GetAsync();
-
-            if (user == null)
-                throw new NotFoundException($"User not found in AD.");
-
-            var sharepointDomain = "damienbodtestsharing.sharepoint.com";
-            var relativePath = "/sites/TestDoc";
-            var fileName = "aad_ms_login_02.png";
-
-            var site = await _graphServiceClient
-                .Sites[sharepointDomain]
-                .SiteWithPath(relativePath)
-                .Request()
-                .GetAsync();
-
-            var drive = await _graphServiceClient
-                .Sites[site.Id]
-                .Drive
-                .Request()
-                .GetAsync();
-
-            var items = await _graphServiceClient
-                .Sites[site.Id]
-                .Drives[drive.Id]
-                .Root
-                .Children
-                .Request().GetAsync();
-
-            var file = items
-                .FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
-
-            var stream = await _graphServiceClient
-                .Sites[site.Id]
-                .Drives[drive.Id]
-                .Items[file.Id].Content
-                .Request()
-                .GetAsync();
-
-            var fileAsString = StreamToString(stream);
-            return fileAsString;
-        }
-
-        private static string StreamToString(Stream stream)
-        {
-            stream.Position = 0;
-            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
+            return reader.ReadToEnd();
         }
     }
 }
