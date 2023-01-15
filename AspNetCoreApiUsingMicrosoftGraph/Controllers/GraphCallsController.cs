@@ -24,5 +24,4 @@ public class GraphCallsController : ControllerBase
         // var file = await _graphApiClientDirect.GetSharepointFile();
         return user.DisplayName;
     }
-
 }
