@@ -6,6 +6,8 @@ https://damienbod.com/2020/11/20/using-microsoft-graph-api-in-asp-net-core/
 
 ## History
 
+2023-01-15 Updated packages to .NET 7
+
 2022-06-10 Updated packages
 
 2022-01-28 Updated packages
@@ -18,7 +20,7 @@ https://damienbod.com/2020/11/20/using-microsoft-graph-api-in-asp-net-core/
 
 2021-02-13 Updated to Microsoft.Identity.Web 1.6.0
 
-# Links
+## Links
 
 https://developer.microsoft.com/en-us/graph/
 

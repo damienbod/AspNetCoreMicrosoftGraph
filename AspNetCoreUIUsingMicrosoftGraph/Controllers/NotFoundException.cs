@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace GraphApiSharepointIdentity.Controllers
+namespace GraphApiSharepointIdentity.Controllers;
+
+[Serializable]
+internal class NotFoundException : Exception
 {
-    [Serializable]
-    internal class NotFoundException : Exception
+    public NotFoundException()
     {
-        public NotFoundException()
-        {
-        }
+    }
 
-        public NotFoundException(string message) : base(message)
-        {
-        }
+    public NotFoundException(string message) : base(message)
+    {
+    }
 
-        public NotFoundException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
+    public NotFoundException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 
-        protected NotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+    protected NotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
     }
 }

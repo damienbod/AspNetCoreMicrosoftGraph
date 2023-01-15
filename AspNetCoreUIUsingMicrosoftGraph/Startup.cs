@@ -1,77 +1,72 @@
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
-namespace GraphApiSharepointIdentity
+namespace GraphApiSharepointIdentity;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        string[]? initialScopes = Configuration.GetValue<string>("CallApi:Scopes")?.Split(' ');
+
+        services.AddHttpClient();
+        services.AddScoped<GraphApiClientUI>();
+        services.AddScoped<ApiService>();
+
+        var baseAddress = Configuration["GraphApi:BaseUrl"];
+        baseAddress ??= "https://graph.microsoft.com/beta";
+
+        services.AddMicrosoftIdentityWebAppAuthentication(Configuration)
+            .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
+            .AddMicrosoftGraph(baseAddress, "https://graph.microsoft.com/.default")
+            .AddInMemoryTokenCaches();
+
+        services.AddControllersWithViews(options =>
         {
-            Configuration = configuration;
-        }
+            var policy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+            options.Filters.Add(new AuthorizeFilter(policy));
+        }).AddMicrosoftIdentityUI();
 
-        public IConfiguration Configuration { get; }
+        services.AddRazorPages();
+    }
 
-        public void ConfigureServices(IServiceCollection services)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            string[] initialScopes = Configuration.GetValue<string>("CallApi:Scopes")?.Split(' ');
-
-            services.AddHttpClient();
-            services.AddScoped<GraphApiClientUI>();
-            services.AddScoped<ApiService>();
-
-            services.AddMicrosoftIdentityWebAppAuthentication(Configuration)
-                .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-                .AddMicrosoftGraph(
-                    Configuration["GraphApi:BaseUrl"], 
-                    "https://graph.microsoft.com/.default")
-                .AddInMemoryTokenCaches();
-
-            services.AddControllersWithViews(options =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            }).AddMicrosoftIdentityUI();
-
-            services.AddRazorPages();
+            app.UseDeveloperExceptionPage();
         }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        else
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
-            });
+            app.UseExceptionHandler("/Home/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
         }
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+            endpoints.MapRazorPages();
+        });
     }
 }
