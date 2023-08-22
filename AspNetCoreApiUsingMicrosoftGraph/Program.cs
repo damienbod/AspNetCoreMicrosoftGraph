@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
 using WebApiUsingGraphApi;
-using Microsoft.Graph.Models.ExternalConnectors;
 
 var builder = WebApplication.CreateBuilder(args);
 

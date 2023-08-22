@@ -4,6 +4,28 @@
 
 https://damienbod.com/2020/11/20/using-microsoft-graph-api-in-asp-net-core/
 
+## API permissions
+
+Sites.Read.All delegated
+
+## Graph API
+
+```csharp
+builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration)
+    .EnableTokenAcquisitionToCallDownstreamApi()
+    .AddMicrosoftGraph(builder.Configuration.GetSection("GraphApi"))
+    .AddInMemoryTokenCaches();
+```
+
+appsettings.json
+
+```json
+"GraphApi": {
+    "ClientId": "89cbcff9-7c4e-4659-9948-d6f7fda186e1",
+    "Scopes": "user.read Sites.Read.All"
+},
+ ```
+
 ## History
 
 2023-08-22 Updated to Graph 5 
