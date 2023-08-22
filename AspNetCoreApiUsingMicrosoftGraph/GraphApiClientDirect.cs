@@ -32,8 +32,11 @@ public class GraphApiClientDirect
         var photo = string.Empty;
         byte[] photoByte;
 
-        using (var photoStream = await _graphServiceClient.Users[oid].Photo
-            .Content.GetAsync())
+        using (var photoStream = await _graphServiceClient
+            .Users[oid]
+            .Photo
+            .Content
+            .GetAsync(b => b.Options.WithScopes("User.ReadBasic.All", "user.read")))
         {
             photoByte = ((MemoryStream)photoStream!).ToArray();
         }
@@ -60,47 +63,45 @@ public class GraphApiClientDirect
     {
         var user = await GetGraphApiUser();
 
-        if (user == null)
-            throw new ArgumentException($"User not found in AD.");
-
-        var sharepointDomain = "damienbodsharepoint.sharepoint.com";
-        var relativePath = "/sites/listview";
+        //var sharepointDomain = "damienbodsharepoint.sharepoint.com";
+        //var relativePath = "/sites/listview";
         var fileName = "20210820_130231.jpg";
 
-        // "AllSites.Read"
-        var site = await _graphServiceClient
-            .Sites[sharepointDomain]
-            .SiteWithPath(relativePath)
-            .Request()
-            .GetAsync();
+        // use graph explorer to find site ID
+        // There must be a better way...
+        var siteId = "damienbodsharepoint.sharepoint.com,73102e3f-af8c-4b6a-b0dd-4afb915cf7de,4d004fec-6241-44cf-86f4-04a8d00cea9e";
+
+        // Graph 5
+        var site = await _graphServiceClient.Sites[siteId]
+            .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
 
         var drive = await _graphServiceClient
-            .Sites[site.Id]
+            .Sites[site!.Id]
             .Drive
-            .Request()
-            .GetAsync();
+            .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
+
+        var driveRoot = await _graphServiceClient.Drives[drive!.Id]
+            .Root
+            .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
 
         var items = await _graphServiceClient
-            .Sites[site.Id]
-            .Drives[drive.Id]
-            .Root
-            .Children
-            .Request()
-            .GetAsync();
+           .Drives[drive!.Id]
+           .Items[driveRoot!.Id]
+           .Children
+           .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
 
-        var file = items.FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
+        var file = items!.Value!.FirstOrDefault(f => f.Name!.Contains(fileName));
 
         var stream = await _graphServiceClient
-            .Sites[site.Id]
             .Drives[drive.Id]
             .Items[file!.Id].Content
-            .Request()
-            .GetAsync();
+            .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
 
-        var fileAsString = StreamToString(stream);
+        var fileAsString = StreamToString(stream!);
         return fileAsString;
-    }
 
+    }
+    
     private static string StreamToString(Stream stream)
     {
         stream.Position = 0;

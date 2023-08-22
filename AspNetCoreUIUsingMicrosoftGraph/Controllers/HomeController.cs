@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Mvc;
 using GraphApiSharepointIdentity.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace GraphApiSharepointIdentity.Controllers;
 
@@ -35,7 +36,11 @@ public class HomeController : Controller
 
         try
         {
-            ViewData["Photo"] = await _graphApiClientUI.GetGraphApiProfilePhoto(user!.Id!);
+            //string OID_TYPE = "http://schemas.microsoft.com/identity/claims/objectidentifier";
+            //var oid = User.Claims.FirstOrDefault(t => t.Type == "oid")!.Value;
+
+            var photo = await _graphApiClientUI.GetGraphApiProfilePhoto(user!.Id!);
+            ViewData["Photo"] = Base64UrlEncoder.DecodeBytes(photo);
         }
         catch
         {
