@@ -4,9 +4,9 @@
 
 https://damienbod.com/2020/11/20/using-microsoft-graph-api-in-asp-net-core/
 
-## API permissions
+## Delegated API permissions
 
-Sites.Read.All delegated
+Sites.Read.All 
 
 ## Graph API
 
