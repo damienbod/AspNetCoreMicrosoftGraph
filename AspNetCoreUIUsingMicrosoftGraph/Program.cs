@@ -1,6 +1,7 @@
 using GraphApiSharepointIdentity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Graph.Models.ExternalConnectors;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.IdentityModel.Logging;
@@ -14,12 +15,13 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<GraphApiClientUI>();
 builder.Services.AddScoped<ApiService>();
 
-var baseAddress = builder.Configuration["GraphApi:BaseUrl"];
-baseAddress ??= "https://graph.microsoft.com/beta";
+
+var graphScopes = builder.Configuration.GetValue<string>("GraphApi:Scopes");
+var initialGraphScopes = graphScopes!.Split(' ');
 
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-    .AddMicrosoftGraph(baseAddress, "https://graph.microsoft.com/.default")
+    .AddMicrosoftGraph(defaultScopes: initialGraphScopes)
     .AddInMemoryTokenCaches();
 
 builder.Services.AddControllersWithViews(options =>

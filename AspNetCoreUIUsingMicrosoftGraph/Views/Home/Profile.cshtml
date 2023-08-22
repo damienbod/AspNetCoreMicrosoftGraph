@@ -15,7 +15,8 @@
             @{
                 if (ViewData["photo"] != null)
                 {
-                    <img style="margin: 5px 0; width: 150px" src="data:image/jpeg;base64, @ViewData["photo"]" />
+                    <img width="200" src="data:image;base64,@System.Convert.ToBase64String((byte[])ViewData["photo"])" style="padding: 5px" />
+
                 }
                 else
                 {
@@ -26,7 +27,7 @@
         </td>
     </tr>
     @{       
-        var me = ViewData["me"] as Microsoft.Graph.User;
+        var me = ViewData["me"] as Microsoft.Graph.Models.User;
         var properties = me.GetType().GetProperties();
         foreach (var child in properties)
         {
