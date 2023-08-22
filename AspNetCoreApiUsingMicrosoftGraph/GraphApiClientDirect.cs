@@ -5,7 +5,6 @@ using System.Text;
 
 namespace WebApiUsingGraphApi;
 
-
 public class GraphApiClientDirect
 {
     private readonly ITokenAcquisition _tokenAcquisition;

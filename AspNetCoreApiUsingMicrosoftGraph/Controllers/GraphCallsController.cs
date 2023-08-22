@@ -21,7 +21,7 @@ public class GraphCallsController : ControllerBase
         var user = await _graphApiClientDirect.GetGraphApiUser();
 
         // var photo = await _graphApiClientDirect.GetGraphApiProfilePhoto();
-        // var file = await _graphApiClientDirect.GetSharepointFile();
+        var file = await _graphApiClientDirect.GetSharepointFile();
         return user.DisplayName;
     }
 }
