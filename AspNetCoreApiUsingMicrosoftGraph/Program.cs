@@ -20,7 +20,7 @@ builder.Services.AddControllers(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
-        // .RequireClaim("email") // disabled this to test with users that have no email (no license added)
+        // .RequireClaim("email")
         .Build();
     options.Filters.Add(new AuthorizeFilter(policy));
 });

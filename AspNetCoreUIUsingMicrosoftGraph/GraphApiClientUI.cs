@@ -42,9 +42,9 @@ public class GraphApiClientUI
         if (user == null)
             throw new NotFoundException($"User not found in AD.");
 
-        var sharepointDomain = "damienbodtestsharing.sharepoint.com";
-        var relativePath = "/sites/TestDoc";
-        var fileName = "aad_ms_login_02.png";
+        var sharepointDomain = "damienbodsharepoint.sharepoint.com";
+        var relativePath = "/sites/listview";
+        var fileName = "20210820_130231.jpg";
 
         var site = await _graphServiceClient
             .Sites[sharepointDomain]
