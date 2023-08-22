@@ -96,7 +96,6 @@ public class GraphApiClientUI
 
         var fileAsString = StreamToString(stream!);
         return fileAsString;
-
     }
 
     private static string StreamToString(Stream stream)

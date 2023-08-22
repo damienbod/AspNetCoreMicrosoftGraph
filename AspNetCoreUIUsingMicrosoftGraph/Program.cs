@@ -16,12 +16,9 @@ builder.Services.AddScoped<GraphApiClientUI>();
 builder.Services.AddScoped<ApiService>();
 
 
-var graphScopes = builder.Configuration.GetValue<string>("GraphApi:Scopes");
-var initialGraphScopes = graphScopes!.Split(' ');
-
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-    .AddMicrosoftGraph(defaultScopes: initialGraphScopes)
+    .AddMicrosoftGraph(builder.Configuration.GetSection("GraphApi"))
     .AddInMemoryTokenCaches();
 
 builder.Services.AddControllersWithViews(options =>

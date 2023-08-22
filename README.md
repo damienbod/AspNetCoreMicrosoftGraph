@@ -6,6 +6,8 @@ https://damienbod.com/2020/11/20/using-microsoft-graph-api-in-asp-net-core/
 
 ## History
 
+2023-08-22 Updated to Graph 5 
+
 2023-08-22 Updated packages and startup
 
 2023-03-02 Updated packages
