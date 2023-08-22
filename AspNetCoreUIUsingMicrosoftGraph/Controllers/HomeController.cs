@@ -29,14 +29,13 @@ public class HomeController : Controller
     [AuthorizeForScopes(ScopeKeySection = "DownstreamApi:Scopes")]
     public async Task<IActionResult> Profile()
     {
-        var user = await _graphApiClientUI.GetGraphApiUser()
-            ;
+        var user = await _graphApiClientUI.GetGraphApiUser();
 
         ViewData["Me"] = user;
 
         try
         {
-            ViewData["Photo"] = await _graphApiClientUI.GetGraphApiProfilePhoto();
+            ViewData["Photo"] = await _graphApiClientUI.GetGraphApiProfilePhoto(user!.Id!);
         }
         catch
         {

@@ -1,59 +1,64 @@
-﻿using Microsoft.Graph;
+﻿using ImageMagick;
+using Microsoft.Graph;
+using Microsoft.Graph.Models;
 using Microsoft.Identity.Web;
-using System.Net.Http.Headers;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace WebApiUsingGraphApi;
 
 public class GraphApiClientDirect
 {
-    private readonly ITokenAcquisition _tokenAcquisition;
-    private readonly IHttpClientFactory _clientFactory;
+    private readonly GraphServiceClient _graphServiceClient;
 
-    public GraphApiClientDirect(ITokenAcquisition tokenAcquisition,
-        IHttpClientFactory clientFactory)
+    public GraphApiClientDirect(GraphServiceClient graphServiceClient)
     {
-        _clientFactory = clientFactory;
-        _tokenAcquisition = tokenAcquisition;
+        _graphServiceClient = graphServiceClient;
     }
 
-    public async Task<User> GetGraphApiUser()
+    public async Task<User?> GetGraphApiUser()
     {
-        var graphclient = await GetGraphClient(new string[] { "User.ReadBasic.All", "user.read" });
-
-        return await graphclient.Me.Request().GetAsync();
+        return await _graphServiceClient.Me
+            .GetAsync(b => b.Options.WithScopes("User.ReadBasic.All", "user.read"));
     }
 
-    public async Task<string> GetGraphApiProfilePhoto()
+    /// <summary>
+    /// https://learn.microsoft.com/en-us/azure/active-directory/verifiable-credentials/how-to-use-quickstart-verifiedemployee
+    /// UrlEncode(Base64Encode(photo)) format. To use the photo, 
+    /// the verifier application has to 
+    /// Base64Decode(UrlDecode(photo)).
+    public async Task<string> GetGraphApiProfilePhoto(string oid)
     {
-        try
+        var photo = string.Empty;
+        byte[] photoByte;
+
+        using (var photoStream = await _graphServiceClient.Users[oid].Photo
+            .Content.GetAsync())
         {
-            var graphclient = await GetGraphClient(new string[] { "User.ReadBasic.All", "user.read" });
-
-            var photo = string.Empty;
-            // Get user photo
-            using (var photoStream = await graphclient.Me.Photo
-                .Content.Request().GetAsync().ConfigureAwait(false))
-            {
-                byte[] photoByte = ((MemoryStream)photoStream).ToArray();
-                photo = Convert.ToBase64String(photoByte);
-            }
-
-            return photo;
+            photoByte = ((MemoryStream)photoStream!).ToArray();
         }
-        catch
-        {
-            return string.Empty;
-        }   
+
+        using var imageFromFile = new MagickImage(photoByte);
+        // Sets the output format to jpeg
+        imageFromFile.Format = MagickFormat.Jpeg;
+        var size = new MagickGeometry(400, 400);
+
+        // This will resize the image to a fixed size without maintaining the aspect ratio.
+        // Normally an image will be resized to fit inside the specified size.
+        //size.IgnoreAspectRatio = true;
+
+        imageFromFile.Resize(size);
+
+        // Create byte array that contains a jpeg file
+        var data = imageFromFile.ToByteArray();
+        photo = Base64UrlEncoder.Encode(data);
+
+        return photo;
     }
 
     public async Task<string> GetSharepointFile()
     {
-        var graphclient = await GetGraphClient(
-            new string[] { "user.read", "AllSites.Read" }
-        );
-
-        var user = await graphclient.Me.Request().GetAsync();
+        var user = await GetGraphApiUser();
 
         if (user == null)
             throw new ArgumentException($"User not found in AD.");
@@ -62,19 +67,20 @@ public class GraphApiClientDirect
         var relativePath = "/sites/listview";
         var fileName = "20210820_130231.jpg";
 
-        var site = await graphclient
+        // "AllSites.Read"
+        var site = await _graphServiceClient
             .Sites[sharepointDomain]
             .SiteWithPath(relativePath)
             .Request()
             .GetAsync();
 
-        var drive = await graphclient
+        var drive = await _graphServiceClient
             .Sites[site.Id]
             .Drive
             .Request()
             .GetAsync();
 
-        var items = await graphclient
+        var items = await _graphServiceClient
             .Sites[site.Id]
             .Drives[drive.Id]
             .Root
@@ -84,7 +90,7 @@ public class GraphApiClientDirect
 
         var file = items.FirstOrDefault(f => f.File != null && f.WebUrl.Contains(fileName));
 
-        var stream = await graphclient
+        var stream = await _graphServiceClient
             .Sites[site.Id]
             .Drives[drive.Id]
             .Items[file!.Id].Content
@@ -93,25 +99,6 @@ public class GraphApiClientDirect
 
         var fileAsString = StreamToString(stream);
         return fileAsString;
-    }
-
-    private async Task<GraphServiceClient> GetGraphClient(string[] scopes)
-    {
-        var token = await _tokenAcquisition.GetAccessTokenForUserAsync(scopes);
-
-        var client = _clientFactory.CreateClient();
-        client.BaseAddress = new Uri("https://graph.microsoft.com/beta");
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        var graphClient = new GraphServiceClient(client)
-        {
-            AuthenticationProvider = new DelegateAuthenticationProvider((requestMessage) => {
-                requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", token);
-                return Task.CompletedTask;
-            }),
-            BaseUrl = "https://graph.microsoft.com/beta"
-        };
-        return graphClient;
     }
 
     private static string StreamToString(Stream stream)
