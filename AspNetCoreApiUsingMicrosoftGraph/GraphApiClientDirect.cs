@@ -11,38 +11,23 @@ public class GraphApiClientDirect
 {
     private readonly GraphServiceClient _graphServiceClient;
 
-    // "User.ReadBasic.All", "user.read" consented in the App registration
+    // "user.read Sites.Read.All" consented in the App registration
     // The default scope is used because this is a deownstream API OBO
     private const string SCOPES = "https://graph.microsoft.com/.default";
 
     public GraphApiClientDirect(GraphServiceClient graphServiceClient)
     {
         // https://graph.microsoft.com/.default
-        // "User.ReadBasic.All", "user.read" consented in the App registration
+        // "user.read Sites.Read.All" consented in the App registration
         _graphServiceClient = graphServiceClient;
     }
 
     public async Task<User?> GetGraphApiUser()
     {
-        try
-        {
-            return await _graphServiceClient
-                .Me
-                .GetAsync(b => b.Options.WithScopes(SCOPES));
-        }
-        catch (Exception ex)
-        {
-            var sdd = ex.Message;
-        }
-
-        return null;
+        return await _graphServiceClient.Me
+            .GetAsync(b => b.Options.WithScopes(SCOPES));
     }
 
-    /// <summary>
-    /// https://learn.microsoft.com/en-us/azure/active-directory/verifiable-credentials/how-to-use-quickstart-verifiedemployee
-    /// UrlEncode(Base64Encode(photo)) format. To use the photo, 
-    /// the verifier application has to 
-    /// Base64Decode(UrlDecode(photo)).
     public async Task<string> GetGraphApiProfilePhoto(string oid)
     {
         var photo = string.Empty;
