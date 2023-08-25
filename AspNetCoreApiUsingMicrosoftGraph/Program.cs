@@ -14,7 +14,7 @@ builder.Services.AddScoped<GraphApiClientDirect>();
 
 builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration)
     .EnableTokenAcquisitionToCallDownstreamApi()
-    .AddMicrosoftGraph(builder.Configuration.GetSection("GraphApi"))
+    .AddMicrosoftGraph()
     .AddInMemoryTokenCaches();
 
 builder.Services.AddControllers(options =>

@@ -11,22 +11,23 @@ public class GraphApiClientDirect
 {
     private readonly GraphServiceClient _graphServiceClient;
 
+    // "user.read Sites.Read.All" consented in the App registration
+    // The default scope is used because this is a deownstream API OBO
+    private const string SCOPES = "https://graph.microsoft.com/.default";
+
     public GraphApiClientDirect(GraphServiceClient graphServiceClient)
     {
+        // https://graph.microsoft.com/.default
+        // "user.read Sites.Read.All" consented in the App registration
         _graphServiceClient = graphServiceClient;
     }
 
     public async Task<User?> GetGraphApiUser()
     {
         return await _graphServiceClient.Me
-            .GetAsync(b => b.Options.WithScopes("User.ReadBasic.All", "user.read"));
+            .GetAsync(b => b.Options.WithScopes(SCOPES));
     }
 
-    /// <summary>
-    /// https://learn.microsoft.com/en-us/azure/active-directory/verifiable-credentials/how-to-use-quickstart-verifiedemployee
-    /// UrlEncode(Base64Encode(photo)) format. To use the photo, 
-    /// the verifier application has to 
-    /// Base64Decode(UrlDecode(photo)).
     public async Task<string> GetGraphApiProfilePhoto(string oid)
     {
         var photo = string.Empty;
@@ -36,7 +37,7 @@ public class GraphApiClientDirect
             .Users[oid]
             .Photo
             .Content
-            .GetAsync(b => b.Options.WithScopes("User.ReadBasic.All", "user.read")))
+            .GetAsync(b => b.Options.WithScopes(SCOPES)))
         {
             photoByte = ((MemoryStream)photoStream!).ToArray();
         }
@@ -73,29 +74,29 @@ public class GraphApiClientDirect
 
         // Graph 5
         var site = await _graphServiceClient.Sites[siteId]
-            .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
+            .GetAsync(b => b.Options.WithScopes(SCOPES));
 
         var drive = await _graphServiceClient
             .Sites[site!.Id]
             .Drive
-            .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
+            .GetAsync(b => b.Options.WithScopes(SCOPES));
 
         var driveRoot = await _graphServiceClient.Drives[drive!.Id]
             .Root
-            .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
+            .GetAsync(b => b.Options.WithScopes(SCOPES));
 
         var items = await _graphServiceClient
            .Drives[drive!.Id]
            .Items[driveRoot!.Id]
            .Children
-           .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
+           .GetAsync(b => b.Options.WithScopes(SCOPES));
 
         var file = items!.Value!.FirstOrDefault(f => f.Name!.Contains(fileName));
 
         var stream = await _graphServiceClient
             .Drives[drive.Id]
             .Items[file!.Id].Content
-            .GetAsync(b => b.Options.WithScopes("Sites.Read.All", "user.read"));
+            .GetAsync(b => b.Options.WithScopes(SCOPES));
 
         var fileAsString = StreamToString(stream!);
         return fileAsString;
