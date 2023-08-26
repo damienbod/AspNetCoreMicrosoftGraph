@@ -62,6 +62,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Using downstream Microsoft Graph API OBO");
+    c.RoutePrefix = string.Empty;
+});
+
 app.UseHttpsRedirection();
 app.UseRouting();
 
