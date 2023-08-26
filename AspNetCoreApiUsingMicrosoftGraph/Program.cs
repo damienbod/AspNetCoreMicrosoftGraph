@@ -54,7 +54,7 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-IdentityModelEventSource.ShowPII = true;
+IdentityModelEventSource.ShowPII = true; // not for production
 
 if (!app.Environment.IsDevelopment())
 {
