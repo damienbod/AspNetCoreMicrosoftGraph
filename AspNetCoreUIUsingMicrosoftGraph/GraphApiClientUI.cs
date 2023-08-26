@@ -12,6 +12,11 @@ public class GraphApiClientUI
 {
     private readonly GraphServiceClient _graphServiceClient;
 
+    /// <summary>
+    /// Used directly in the confidential UI application
+    /// Same App registration is used to add the graph permissions
+    /// </summary>
+    /// <param name="graphServiceClient"></param>
     public GraphApiClientUI(GraphServiceClient graphServiceClient)
     {
         _graphServiceClient = graphServiceClient;

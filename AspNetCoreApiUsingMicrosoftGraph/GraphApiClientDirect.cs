@@ -12,7 +12,7 @@ public class GraphApiClientDirect
     private readonly GraphServiceClient _graphServiceClient;
 
     // "user.read Sites.Read.All" consented in the App registration
-    // The default scope is used because this is a deownstream API OBO
+    // The default scope is used because this is a downstream API OBO delegated user flow
     private const string SCOPES = "https://graph.microsoft.com/.default";
 
     public GraphApiClientDirect(GraphServiceClient graphServiceClient)

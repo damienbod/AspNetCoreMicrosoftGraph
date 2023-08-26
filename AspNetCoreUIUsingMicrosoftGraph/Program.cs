@@ -15,7 +15,6 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<GraphApiClientUI>();
 builder.Services.AddScoped<ApiService>();
 
-
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
     .AddMicrosoftGraph(builder.Configuration.GetSection("GraphApi"))
