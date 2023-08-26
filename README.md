@@ -8,25 +8,52 @@ https://damienbod.com/2020/11/20/using-microsoft-graph-api-in-asp-net-core/
 
 Sites.Read.All 
 
-## Graph API
+## Graph API setup in Web API project
 
 ```csharp
+builder.Services.AddScoped<GraphApiClientDirect>();
+
 builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration)
     .EnableTokenAcquisitionToCallDownstreamApi()
-    .AddMicrosoftGraph(builder.Configuration.GetSection("GraphApi"))
+    .AddMicrosoftGraph()
     .AddInMemoryTokenCaches();
 ```
 
 appsettings.json
 
 ```json
-"GraphApi": {
-    "ClientId": "89cbcff9-7c4e-4659-9948-d6f7fda186e1",
-    "Scopes": "user.read Sites.Read.All"
-},
+  "AzureAd": {
+    "Instance": "https://login.microsoftonline.com/",
+    "Domain": "damienbodsharepoint.onmicrosoft.com",
+    "CallbackPath": "/signin-oidc",
+    "ClientId": "89cbcff9-7c4e-4659-9948-d6f7fda186e1", // sharepoint graph api
+    "TenantId": "5698af84-5720-4ff0-bdc3-9d9195314244"
+    // Secret is required for the downstream Graph API call
+    // secret is not required for the API itself
+    //"ClientSecret": "--secret-in-user-secrets--"
+  },
+ ```
+
+Graph service from API for OBO flow, downstream API
+
+ ```csharp
+private readonly GraphServiceClient _graphServiceClient;
+
+// "user.read Sites.Read.All" consented in the App registration
+// The default scope is used because this is a downstream API OBO delegated user flow
+private const string SCOPES = "https://graph.microsoft.com/.default";
+
+public GraphApiClientDirect(GraphServiceClient graphServiceClient)
+{
+    // https://graph.microsoft.com/.default
+    // "user.read Sites.Read.All" consented in the App registration
+    _graphServiceClient = graphServiceClient;
+}
  ```
 
 ## History
+
+2023-08-26 Improved code, added comments
 
 2023-08-22 Updated to Graph 5 
 
