@@ -65,7 +65,7 @@ if (!app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Using downstream Microsoft Graph API OBO");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API using downstream Microsoft Graph API OBO");
     c.RoutePrefix = string.Empty;
 });
 
