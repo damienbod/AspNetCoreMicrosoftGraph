@@ -72,6 +72,7 @@ public class GraphApiClientDirect
         // There must be a better way...
         var siteId = "damienbodsharepoint.sharepoint.com,73102e3f-af8c-4b6a-b0dd-4afb915cf7de,4d004fec-6241-44cf-86f4-04a8d00cea9e";
 
+        // error handling is required, for example access denied to site etc
         // Graph 5
         var site = await _graphServiceClient.Sites[siteId]
             .GetAsync(b => b.Options.WithScopes(SCOPES));
