@@ -13,7 +13,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 
     <PackageReference Include="Microsoft.Identity.Web" Version="2.13.3" />
-    <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.13.3" />
     <PackageReference Include="Microsoft.Identity.Web.GraphServiceClient" Version="2.13.3" />
 	  
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.2.0" />
