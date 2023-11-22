@@ -53,27 +53,18 @@ public GraphApiClientDirect(GraphServiceClient graphServiceClient)
 
 ## History
 
-2023-08-26 Improved code, added comments
-
-2023-08-22 Updated to Graph 5 
-
-2023-08-22 Updated packages and startup
-
-2023-03-02 Updated packages
-
-2023-01-15 Updated packages to .NET 7
-
-2022-06-10 Updated packages
-
-2022-01-28 Updated packages
-
-2021-12-15 Updated packages
-
-2021-10-29 Updated to .NET 6, Microsoft.Identity.Web 1.18.0
-
-2021-02-28 Updated to Microsoft.Identity.Web 1.7.0
-
-2021-02-13 Updated to Microsoft.Identity.Web 1.6.0
+- 2023-11-22 Updated .NET 8
+- 2023-08-26 Improved code, added comments
+- 2023-08-22 Updated to Graph 5 
+- 2023-08-22 Updated packages and startup
+- 2023-03-02 Updated packages
+- 2023-01-15 Updated packages to .NET 7
+- 2022-06-10 Updated packages
+- 2022-01-28 Updated packages
+- 2021-12-15 Updated packages
+- 2021-10-29 Updated to .NET 6, Microsoft.Identity.Web 1.18.0
+- 2021-02-28 Updated to Microsoft.Identity.Web 1.7.0
+- 2021-02-13 Updated to Microsoft.Identity.Web 1.6.0
 
 ## Links
 
