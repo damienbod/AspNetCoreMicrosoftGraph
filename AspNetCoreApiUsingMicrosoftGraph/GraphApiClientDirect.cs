@@ -105,7 +105,7 @@ public class GraphApiClientDirect
     
     private static string StreamToString(Stream stream)
     {
-        stream.Position = 0;
+        //stream.Position = 0; // causes an exception now.
         using var reader = new StreamReader(stream, Encoding.UTF8);
         return reader.ReadToEnd();
     }
