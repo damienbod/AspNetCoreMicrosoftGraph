@@ -12,8 +12,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.0" NoWarn="NU1605" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 
-    <PackageReference Include="Microsoft.Identity.Web" Version="2.15.5" />
-    <PackageReference Include="Microsoft.Identity.Web.GraphServiceClient" Version="2.15.5" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="2.16.0" />
+    <PackageReference Include="Microsoft.Identity.Web.GraphServiceClient" Version="2.16.0" />
 	  
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.4.0" />
   </ItemGroup>

@@ -53,6 +53,7 @@ public GraphApiClientDirect(GraphServiceClient graphServiceClient)
 
 ## History
 
+- 2023-12-02 Fix photo streaming
 - 2023-11-22 Updated .NET 8
 - 2023-08-26 Improved code, added comments
 - 2023-08-22 Updated to Graph 5 

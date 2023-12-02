@@ -33,13 +33,12 @@ public class GraphApiClientDirect
         var photo = string.Empty;
         byte[] photoByte;
 
-        using (var photoStream = await _graphServiceClient
-            .Users[oid]
-            .Photo
-            .Content
-            .GetAsync(b => b.Options.WithScopes(SCOPES)))
+        var streamPhoto = new MemoryStream();
+        using (var photoStream = await _graphServiceClient.Users[oid].Photo
+            .Content.GetAsync())
         {
-            photoByte = ((MemoryStream)photoStream!).ToArray();
+            photoStream!.CopyTo(streamPhoto);
+            photoByte = streamPhoto!.ToArray();
         }
 
         using var imageFromFile = new MagickImage(photoByte);

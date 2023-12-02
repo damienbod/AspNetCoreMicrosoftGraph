@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Identity.Web" Version="2.15.5" />
-    <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.15.5" />
-    <PackageReference Include="Microsoft.Identity.Web.GraphServiceClient" Version="2.15.5" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="2.16.0" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.16.0" />
+    <PackageReference Include="Microsoft.Identity.Web.GraphServiceClient" Version="2.16.0" />
 
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.4.0" />
   </ItemGroup>
